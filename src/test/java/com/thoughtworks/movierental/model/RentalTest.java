@@ -57,4 +57,20 @@ public class RentalTest {
 
         assertEquals(4.5, rental.amount(), 0.0);
     }
+
+    @Test
+    public void shouldCalculateFrequentRenterPoints() {
+        when(movie.getPriceCode()).thenReturn(CHILDRENS);
+        Rental rental = new Rental(movie, 5);
+
+        assertEquals(1, rental.frequentRenterPoints());
+    }
+
+    @Test
+    public void shouldCalculateFrequentRenterPointsForNewReleaseWhenRentedForMoreThanOneDays() {
+        when(movie.getPriceCode()).thenReturn(NEW_RELEASE);
+        Rental rental = new Rental(movie, 2);
+
+        assertEquals(2, rental.frequentRenterPoints());
+    }
 }

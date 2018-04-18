@@ -11,71 +11,82 @@ import static com.thoughtworks.movierental.model.Movie.REGULAR;
 @Entity
 public class Rental {
 
-  @Id
-  @GeneratedValue
-  private Long id;
+    final static int RENTER_POINT = 1;
+    final static int BONUS_RENTER_POINT = 1;
 
-  @Column(name="DAYS_RENTED")
-  private int daysRented;
+    @Id
+    @GeneratedValue
+    private Long id;
 
-  @Column(name="START_DATE")
-  private Date startDate;
+    @Column(name = "DAYS_RENTED")
+    private int daysRented;
 
-  @JoinColumn(name="MOVIE_ID")
-  private Movie movie;
+    @Column(name = "START_DATE")
+    private Date startDate;
 
-  @ManyToOne
-  private Customer customer;
+    @JoinColumn(name = "MOVIE_ID")
+    private Movie movie;
 
-  protected Rental(){}
+    @ManyToOne
+    private Customer customer;
 
-  public Rental(Movie movie, int daysRented) {
-    this(movie, daysRented, Date.valueOf(LocalDate.now()));
-  }
+    protected Rental() {}
 
-  Rental(Movie movie, int daysRented, Date startDate){
-    this.movie = movie;
-    this.daysRented = daysRented;
-    this.startDate = startDate;
-  }
-
-  public int getDaysRented() {
-    return daysRented;
-  }
-
-  public Movie getMovie() {
-    return movie;
-  }
-
-  public Customer getCustomer() {
-    return customer;
-  }
-
-  public LocalDate getStartDate() {
-    return startDate.toLocalDate();
-  }
-
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
-  }
-
-  double amount() {
-    double amount = 0;
-    switch (movie.getPriceCode()) {
-      case REGULAR:
-        amount += 2;
-        if (daysRented > 2)
-          amount += (daysRented - 2) * 1.5;
-        break;
-      case NEW_RELEASE:
-        amount += daysRented * 3;
-        break;
-      case CHILDRENS:
-        amount += 1.5;
-        if (daysRented > 3)
-          amount += (daysRented - 3) * 1.5;
-        break;
+    public Rental(Movie movie, int daysRented) {
+        this(movie, daysRented, Date.valueOf(LocalDate.now()));
     }
-    return amount;
-  }
+
+    Rental(Movie movie, int daysRented, Date startDate) {
+        this.movie = movie;
+        this.daysRented = daysRented;
+        this.startDate = startDate;
+    }
+
+    public int getDaysRented() {
+        return daysRented;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate.toLocalDate();
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    double amount() {
+        double amount = 0;
+        switch (movie.getPriceCode()) {
+            case REGULAR:
+                amount += 2;
+                if (daysRented > 2)
+                    amount += (daysRented - 2) * 1.5;
+                break;
+            case NEW_RELEASE:
+                amount += daysRented * 3;
+                break;
+            case CHILDRENS:
+                amount += 1.5;
+                if (daysRented > 3)
+                    amount += (daysRented - 3) * 1.5;
+                break;
+        }
+        return amount;
+    }
+
+    int frequentRenterPoints() {
+        return RENTER_POINT + bonusRenterPoint();
+    }
+
+    private int bonusRenterPoint() {
+        return ((movie.getPriceCode() == NEW_RELEASE) && daysRented > 1) ? BONUS_RENTER_POINT : 0;
+    }
 }
