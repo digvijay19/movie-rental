@@ -3,6 +3,10 @@ package com.thoughtworks.movierental.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+
+import static java.lang.String.valueOf;
+import static java.util.stream.Collectors.joining;
 
 @Entity
 public class Customer {
@@ -36,25 +40,21 @@ public class Customer {
   }
 
   public String statement() {
-    double totalAmount = 0;
-    int totalRenterPoints = 0;
     String result = "Rental Record for " + getName() + "\n";
-
-    for (Rental rental : rentals) {
-      double rentalAmount = rental.amount();
-      totalRenterPoints += rental.frequentRenterPoints();
-
-      //show figures for this rental
-      result += "\t" + rental.getMovie().getTitle() + "\t" +
-          String.valueOf(rentalAmount) + "\n";
-      totalAmount += rentalAmount;
-    }
+    result += rentals.stream().map((rental) -> "\t" + rental.getMovie().getTitle() + "\t" + valueOf(rental.amount()) + "\n").collect(joining());
 
     //add footer lines result
-    result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-    result += "You earned " + String.valueOf(totalRenterPoints)
-        + " frequent renter points";
+    result += "Amount owed is " + valueOf(totalRentalAmount()) + "\n";
+    result += "You earned " + valueOf(totalRenterPoints()) + " frequent renter points";
     return result;
+  }
+
+  private double totalRentalAmount() {
+    return rentals.stream().mapToDouble(Rental::amount).sum();
+  }
+
+  private int totalRenterPoints() {
+    return rentals.stream().mapToInt(Rental::frequentRenterPoints).sum();
   }
 
   public String getEmail() {
