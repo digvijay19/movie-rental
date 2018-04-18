@@ -40,13 +40,21 @@ public class Customer {
   }
 
   public String statement() {
-    String result = "Rental Record for " + getName() + "\n";
-    result += rentals.stream().map((rental) -> "\t" + rental.getMovie().getTitle() + "\t" + valueOf(rental.amount()) + "\n").collect(joining());
+      return statementHeader() + statementBody() + statementFooter();
+  }
 
-    //add footer lines result
-    result += "Amount owed is " + valueOf(totalRentalAmount()) + "\n";
-    result += "You earned " + valueOf(totalRenterPoints()) + " frequent renter points";
-    return result;
+  private String statementHeader() {
+    return "Rental Record for " + getName() + "\n";
+  }
+
+  private String statementBody() {
+    return rentals.stream()
+            .map((rental) -> "\t" + rental.getMovie().getTitle() + "\t" + valueOf(rental.amount()) + "\n")
+            .collect(joining());
+    }
+
+  private String statementFooter() {
+    return "Amount owed is " + valueOf(totalRentalAmount()) + "\n" + "You earned " + valueOf(totalRenterPoints()) + " frequent renter points";
   }
 
   private double totalRentalAmount() {
