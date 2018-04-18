@@ -4,6 +4,10 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
 
+import static com.thoughtworks.movierental.model.Movie.CHILDRENS;
+import static com.thoughtworks.movierental.model.Movie.NEW_RELEASE;
+import static com.thoughtworks.movierental.model.Movie.REGULAR;
+
 @Entity
 public class Rental {
 
@@ -55,4 +59,23 @@ public class Rental {
     this.customer = customer;
   }
 
+  double amount() {
+    double amount = 0;
+    switch (movie.getPriceCode()) {
+      case REGULAR:
+        amount += 2;
+        if (daysRented > 2)
+          amount += (daysRented - 2) * 1.5;
+        break;
+      case NEW_RELEASE:
+        amount += daysRented * 3;
+        break;
+      case CHILDRENS:
+        amount += 1.5;
+        if (daysRented > 3)
+          amount += (daysRented - 3) * 1.5;
+        break;
+    }
+    return amount;
+  }
 }
