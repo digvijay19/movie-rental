@@ -89,4 +89,8 @@ public class Rental {
     private int bonusRenterPoint() {
         return ((movie.getPriceCode() == NEW_RELEASE) && daysRented > 1) ? BONUS_RENTER_POINT : 0;
     }
+
+    public String movieTitle() {
+        return movie.getTitle();
+    }
 }

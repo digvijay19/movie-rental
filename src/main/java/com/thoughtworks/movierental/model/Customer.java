@@ -1,8 +1,6 @@
 package com.thoughtworks.movierental.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.joining;
@@ -20,7 +18,7 @@ public class Customer {
     private String email;
 
     @OneToMany(targetEntity = Rental.class, mappedBy = "customer")
-    private List<Rental> rentals = new ArrayList<>();
+    private Rentals rentals = new Rentals();
 
     protected Customer() {
     }
@@ -44,15 +42,11 @@ public class Customer {
     }
 
     public String htmlStatement() {
-        return statementHeaderHtml() + statementBodyHtml() + statementFooterHtml();
+        return new HtmlStatement(rentals, name).statement();
     }
 
     private String statementHeader() {
         return "Rental Record for " + getName() + "\n";
-    }
-
-    private String statementHeaderHtml() {
-        return "<h1>" + ("Rental Record for " + getName()) + "</h1>";
     }
 
     private String statementBody() {
@@ -61,26 +55,8 @@ public class Customer {
                 .collect(joining());
     }
 
-    private String statementBodyHtml() {
-        return rentals.stream()
-                .map((rental) -> "<h3>" + rental.getMovie().getTitle() + "</h3>-&nbsp<b>" + valueOf(rental.amount()) + "</b></br>")
-                .collect(joining());
-    }
-
     private String statementFooter() {
-        return "Amount owed is " + valueOf(totalRentalAmount()) + "\n" + "You earned " + valueOf(totalRenterPoints()) + " frequent renter points";
-    }
-
-    private String statementFooterHtml() {
-        return "<b>" + "Amount owed is " + valueOf(totalRentalAmount()) + "</b></br><b>" + "You earned " + valueOf(totalRenterPoints()) + " frequent renter points" + "</b>";
-    }
-
-    private double totalRentalAmount() {
-        return rentals.stream().mapToDouble(Rental::amount).sum();
-    }
-
-    private int totalRenterPoints() {
-        return rentals.stream().mapToInt(Rental::frequentRenterPoints).sum();
+        return "Amount owed is " + valueOf(rentals.totalRentalAmount()) + "\n" + "You earned " + valueOf(rentals.totalRenterPoints()) + " frequent renter points";
     }
 
     public String getEmail() {
