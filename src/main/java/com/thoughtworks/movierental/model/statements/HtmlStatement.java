@@ -1,15 +1,17 @@
-package com.thoughtworks.movierental.model;
+package com.thoughtworks.movierental.model.statements;
+
+import com.thoughtworks.movierental.model.Rentals;
 
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.joining;
 
 public class HtmlStatement {
     private Rentals rentals;
-    private String name;
+    private String customerName;
 
-    HtmlStatement(Rentals rentals, String name) {
+    public HtmlStatement(Rentals rentals, String customerName) {
         this.rentals = rentals;
-        this.name = name;
+        this.customerName = customerName;
     }
 
     public String statement() {
@@ -17,7 +19,7 @@ public class HtmlStatement {
     }
 
     private String header() {
-        return "<h1>" + ("Rental Record for " + name) + "</h1>";
+        return "<h1>" + ("Rental Record for " + customerName) + "</h1>";
     }
 
     private String body() {

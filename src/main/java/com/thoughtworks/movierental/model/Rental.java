@@ -62,7 +62,7 @@ public class Rental {
         this.customer = customer;
     }
 
-    double amount() {
+    public double amount() {
         double amount = 0;
         switch (movie.getPriceCode()) {
             case REGULAR:

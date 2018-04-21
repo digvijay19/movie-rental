@@ -1,9 +1,9 @@
 package com.thoughtworks.movierental.model;
 
-import javax.persistence.*;
+import com.thoughtworks.movierental.model.statements.HtmlStatement;
+import com.thoughtworks.movierental.model.statements.TextStatement;
 
-import static java.lang.String.valueOf;
-import static java.util.stream.Collectors.joining;
+import javax.persistence.*;
 
 @Entity
 public class Customer {
@@ -38,25 +38,11 @@ public class Customer {
     }
 
     public String statement() {
-        return statementHeader() + statementBody() + statementFooter();
+        return new TextStatement(rentals, name).statement();
     }
 
     public String htmlStatement() {
         return new HtmlStatement(rentals, name).statement();
-    }
-
-    private String statementHeader() {
-        return "Rental Record for " + getName() + "\n";
-    }
-
-    private String statementBody() {
-        return rentals.stream()
-                .map((rental) -> "\t" + rental.getMovie().getTitle() + "\t" + valueOf(rental.amount()) + "\n")
-                .collect(joining());
-    }
-
-    private String statementFooter() {
-        return "Amount owed is " + valueOf(rentals.totalRentalAmount()) + "\n" + "You earned " + valueOf(rentals.totalRenterPoints()) + " frequent renter points";
     }
 
     public String getEmail() {

@@ -1,5 +1,6 @@
 package com.thoughtworks.movierental.model;
 
+import com.thoughtworks.movierental.model.statements.HtmlStatement;
 import org.junit.Test;
 
 import static com.thoughtworks.movierental.model.Movie.REGULAR;
